@@ -1,11 +1,15 @@
+import { randomUUID } from "node:crypto";
 import http from "node:http";
+import { Database } from "./database.js";
 import { jsson } from "./middlewares/json.js";
 
-const users = [];
+const database = new Database();
+
 const server = http.createServer(async (req, res) => {
   const { method, url } = req;
 
   if (method === "GET" && url === "/users") {
+    const users = database.select("users");
     return res.end(JSON.stringify(users));
   }
 
@@ -13,12 +17,13 @@ const server = http.createServer(async (req, res) => {
 
   if (method === "POST" && url === "/users") {
     const { name, email } = req.body;
-    users.push({
-      id: 1,
+    const user = {
+      id: randomUUID(),
       name,
       email,
-    });
+    };
 
+    database.insert("users", user);
     return res.writeHead(201).end();
   }
   return res.writeHead(404).end("Not Found");
