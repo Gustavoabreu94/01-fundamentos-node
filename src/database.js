@@ -36,4 +36,27 @@ export class Database {
 
     return data;
   }
+
+  update(table, id, data) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+    console.log(rowIndex);
+    if (rowIndex > -1) {
+      console.log(this.#database[table][rowIndex]);
+      this.#database[table][rowIndex] = { id, ...data };
+      this.#persist();
+    }
+
+    this.#persist();
+
+    return data;
+  }
+
+  delete(table, id) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+
+    if (rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1);
+      this.#persist();
+    }
+  }
 }
